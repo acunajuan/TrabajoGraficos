@@ -1,0 +1,651 @@
+---
+title: "TrabajoGraficos"
+author: "Juan Acuna"
+date: "8/8/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## Instalacion de ggplot2
+
+```{r}
+install.packages("ggplot2")
+library(ggplot2)
+```
+
+## Estadisticas de las variables
+
+```{r}
+summary(fullDatos)
+```
+
+# Editando una variable extensa
+
+```{r}
+
+fullDatos$tiponegocio
+fullDatos$tiponegocio[-27]
+fullDatos$tiponegocio[fullDatos$tiponegocio == "Servicios domésticos y alimenticiosFormaciónNiñeraEventos / FiestasConstrucción / ReparaciónSalud/BellezaInformáticaTraducciónTransporte / MudanzaProfesionales liberalesTurismo"] <- "Servicios domésticos y alimenticios"
+fullDatos$tiponegocio
+
+```
+
+# Eliminando variables distractores
+
+```{r}
+rm(tipoNegocio)
+rm(anioUsuarioyapo)
+rm(urlYapo)
+```
+
+## Ejercicio 1 (30 puntos)
+#Genere un filtro en las variables que le llamen la atención para realizar un estudio con los siguientes puntos.
+
+```{r}
+ggplot(fullDatos,aes(x = comuna, fill = precio))+
+  scale_x_discrete(name = "Comunas")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Cantidad de Publicaciones por Comunas agrupados por Precio")+
+  coord_flip()+
+  geom_bar()
+```
+
+
+```{r}
+ggplot(fullDatos,aes(x = comuna, fill = tiponegocio))+
+  scale_x_discrete(name = "Comunas")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Publicaciones por Comunas agrupados por Tipo de Negocio")+
+  coord_flip()+
+  geom_bar()
+```
+
+
+```{r}
+ggplot(fullDatos,aes(x = categoria , fill = comuna))+
+  scale_x_discrete(name = "Categorias")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Publicaciones por Categorias agrupados por Comuna")+
+  coord_flip()+
+  geom_bar()
+```
+
+
+```{r}
+ggplot(fullDatos,aes(x = categoria , fill = precio))+
+  scale_x_discrete(name = "Categorias")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Publicaciones por Categorias agrupados por Precio")+
+  coord_flip()+
+  geom_bar()
+```
+
+
+```{r}
+ggplot(fullDatos,aes(x = categoria , fill = tiponegocio))+
+  scale_x_discrete(name = "Categorias")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Publicaciones por Categorias agrupados por Tipo de Negocio")+
+  coord_flip()+
+  geom_bar()
+```
+
+
+```{r}
+ggplot(fullDatos,aes(x = categoria , fill = aniousuarioyapo))+
+  scale_x_discrete(name = "Categorias")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Publicaciones por Categorias agrupados por Año de Registro de Usuario")+
+  coord_flip()+
+  geom_bar()
+```
+
+
+```{r}
+ggplot(fullDatos,aes(x = tiponegocio , fill = precio))+
+  scale_x_discrete(name = "Tipo de Negocio")+
+  scale_y_continuous(name = "Publicaciones", lim = c(0,135))+
+  ggtitle(label = "Publicaciones por Tipo de Negocio agrupados por Precio")+
+  geom_text(stat = "count" ,hjust=0, vjust = 0, position = position_dodge(-1), aes(x = fullDatos$tiponegocio, label = stat(count)))+
+  coord_flip()+
+  geom_bar()
+```
+
+
+```{r}
+ggplot(fullDatos,aes(x = aniousuarioyapo , fill = comuna))+
+  scale_x_discrete(name = "Año de Usuario de Yapo")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Cantidad de Publicaciones por Año agrupados por Comunas")+
+  geom_bar()
+```
+
+
+```{r}
+ggplot(fullDatos,aes(x = aniousuarioyapo , fill = precio))+
+  scale_x_discrete(name = "Año de Usuario de Yapo")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Cantidad de Publicaciones por Año de Registro de Usuario agrupados por Precio")+
+  geom_text(stat = "count" ,hjust=1, vjust = 0, position = position_dodge(1), aes(x = fullDatos$aniousuarioyapo, label = stat(count)))+
+  geom_bar()
+```
+
+
+```{r}
+ggplot(fullDatos,aes(x = aniousuarioyapo , fill = tiponegocio))+
+  scale_x_discrete(name = "Año de Usuario de Yapo")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Cantidad de Publicaciones por Año de Registro de Usuario por Tipo de Negocio")+
+  geom_bar()
+```
+
+##Ejercicio 2 (50 puntos)
+#Analice la información entregada y redacte un informe respecto a estos datos, a través de #visualizaciones.
+
+El análisis comenzará con la variable precio, buscando determinar cómo se relaciona con las demás variables, para esto en primera instancia se muestra una visualización de esta variable con su respectiva frecuencia:
+
+```{r}
+ggplot(fullDatos,aes(x = precio))+
+  scale_x_continuous(name = "Precios")+
+  scale_y_continuous(name = "Publicaciones")+
+  geom_histogram()+
+  ggtitle(label = "Grafico de Distribucion del Precio")
+```
+
+Como se puede visualizar en el grafico precedente, los productos que se publican en la página yapo, en su mayoría tienen un precio bajo, concentrándose en la parte izquierda del gráfico, considerando solo pequeños rangos en que la frecuencia de los precios se escapa de la media, para poder verificar a qué tipo de negocio corresponden estos precios es que se presenta el siguiente gráfico:
+
+
+```{r}
+ggplot(fullDatos,aes(x = tiponegocio , fill = precio))+
+  scale_x_discrete(name = "Tipo de Negocio")+
+  scale_y_continuous(name = "Publicaciones", lim = c(0,135))+
+  ggtitle(label = "Publicaciones por Tipo de Negocio agrupados por Precio")+
+  geom_text(stat = "count" ,hjust=0, vjust = 0, position = position_dodge(-1), aes(x = fullDatos$tiponegocio, label = stat(count)))+
+  coord_flip()+
+  geom_bar()
+```
+
+Como se visualiza en el gráfico, la gran mayoría de las publicaciones corresponden a venta de productos (127 publicaciones), además de acuerdo al filtro, el tipo de negocios venta, es en donde se publican los precios con menor costo (color gris), mientras que el que representa mayor valor económico se sitúa en el tipo de negocio correspondiente a servicios domésticos y alimenticios seguido por construcción / reparación transporte / mudanza (color azul claro, los dos con una publicación cada uno).
+
+Con el objetivo de ampliar el análisis sobre el precio de estos 3 tipos de negocios mencionados, es que se realiza un filtro que muestra de manera más detallada estos tipos de negocios, con el que se busca contrastar los precios según tipo de negocios:
+
+
+```{r}
+ggplot(df1,aes(x = tiponegocio , fill = precio))+
+  scale_x_discrete(name = "Tipo de Negocio")+
+  scale_y_continuous(name = "Publicaciones", lim = c(0,135))+
+  ggtitle(label = "Publicaciones por 3 Tipos de Negocios agrupados por Precio")+
+  geom_text(stat = "count" ,hjust=0, vjust = 0, position = position_dodge(-1), aes(x = df1$tiponegocio, label = stat(count)))+
+  coord_flip()+
+  geom_bar()
+```
+
+En este grafico se puede visualizar de manera más clara los precios más altos correspondientes a los tipos de negocios: Servicios domésticos y alimenticios y Construcción, reparación transporte y mudanza contrastando con los más bajos relacionados al tipo de negocio venta.
+
+además, se realiza un filtro por comuna, para determinar que comunas son las que publican con mayores precios según el tipo de negocios, lo que da como resultado a las comunas de Maipú y Providencia, como se muestra en el siguiente gráfico:
+
+```{r}
+ggplot(df2,aes(x = tiponegocio , fill = comuna))+
+  scale_x_discrete(name = "Tipo de Negocio")+
+  scale_y_continuous(name = "Publicaciones", lim = c(0,1.25))+
+  ggtitle(label = "Publicaciones por los 2 Tipos de Negocios con Mayor Precio agrupados por Comuna")+
+  geom_bar()
+```
+
+
+Contrastando el grafico anterior con la totalidad de comunas con respecto a la misma variable (tipo de negocio), se muestra lo siguiente:
+
+```{r}
+ggplot(fullDatos,aes(x = comuna, fill = tiponegocio))+
+  scale_x_discrete(name = "Comunas")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Publicaciones por Comunas agrupados por Tipo de Negocio")+
+  coord_flip()+
+  geom_bar()
+```
+
+En el grafico se puede visualizar una notoria preponderancia del tipo de negocio venta en la totalidad de las comunas, sin embargo, al concentrar el análisis en la comuna de Maipú que es destacada como una con la mayor cantidad de publicaciones, se puede visualizar que posee un número importante de publicaciones relacionadas al área de Construcción, reparación transporte y mudanza, la que como tipo de negocio posee uno de los más altos precios.
+
+Con el objetivo de vincular los tipos de negocios con su categoría respectiva, lo que servirá para los análisis posteriores, es que se presenta el siguiente grafico que muestra su relación:
+
+
+```{r}
+ggplot(fullDatos,aes(x = categoria , fill = tiponegocio))+
+  scale_x_discrete(name = "Categorias")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Publicaciones por Categorias agrupados por Tipo de Negocio")+
+  coord_flip()+
+  geom_bar()
+```
+
+Se puede ver en el grafico que las categorías que más aportan al tipo de negocio venta son los accesorios y piezas para vehículos, seguidos por consolas videojuegos y accesorios, los que serán analizados más adelante en el informe.
+
+Continuando con el análisis, se presenta un gráfico que muestra el precio según categoría de productos que se comercializan dentro de la página web de yapo:
+
+
+```{r}
+ggplot(fullDatos,aes(x = categoria , fill = precio))+
+  scale_x_discrete(name = "Categorias")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Publicaciones por Categorias agrupados por Precio")+
+  coord_flip()+
+  geom_bar()
+```
+
+En este grafico se puede visualizar que la categoría en que más se publica son los accesorios y piezas para vehículos, seguidos por muebles y consolas, videojuegos y accesorios, sin embargo, estas categorías no son las que representan un mayor precio dentro de la página, dado que el mayor precio se comercializa en la categoría ofertas de empleo, teniendo una menor cantidad de publicaciones en la página.
+
+A continuación, se muestra un gráfico que relaciona estas variables, con el objetivo de hacer más comprensible el análisis:
+
+
+```{r}
+ggplot(df3,aes(x = categoria , fill = precio))+
+  scale_x_discrete(name = "Categorias")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Publicaciones por Categorias mas Publicadas agrupadas por Precio")+
+  coord_flip()+
+  geom_bar()
+```
+
+Por otra parte, se muestra un gráfico que relaciona estas categorías con el año de suscripción a la página de los usuarios de yapo, con el objetivo de ver su movimiento a través del tiempo y descifrar si corresponde a una tendencia temporal del último año o es más una tendencia que sigue a lo largo del tiempo.
+
+```{r}
+ggplot(fullDatos,aes(x = categoria , fill = aniousuarioyapo))+
+  scale_x_discrete(name = "Categorias")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Publicaciones por Categorias agrupados por Año de Registro de Usuario")+
+  coord_flip()+
+  geom_bar()
+```
+
+Se deja demostrado nuevamente la preponderancia de las categorías de accesorios y piezas para vehículos, seguido por consolas, videojuegos y accesorios y la categoría muebles, durante el transcurso de los años, lo que demostraría que no existe un factor tiempo en estos productos más comercializados.
+
+Al igual que en los gráficos anteriores su busca realizar un análisis por comuna para verificar su concentración, el cual queda de la siguiente manera:
+
+
+```{r}
+ggplot(df3,aes(x = categoria , fill = comuna))+
+  scale_x_discrete(name = "Categorias")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Publicaciones por Categorias mas Publicadas agrupadas por Comuna")+
+  coord_flip()+
+  geom_bar()
+```
+
+Como se puede visualizar en el gráfico, no existe alguna concentración de comunas que lidere dentro de las categorías, las distribuciones de las publicaciones de las categorías más publicadas se reparten de manera normal entre las comunas, sin que sea posible distinguir por ahora alguna tendencia.
+
+Continuando con el análisis se presenta un gráfico que muestra la relación de la variable precio con las comunas correspondientes a la región metropolitana donde se realizan publicaciones en la página yapo:
+
+
+```{r}
+ggplot(fullDatos,aes(x = comuna, fill = precio))+
+  scale_x_discrete(name = "Comunas")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Cantidad de Publicaciones por Comunas agrupados por Precio")+
+  coord_flip()+
+  geom_bar()
+```
+
+
+Tal como se puede visualizar en el gráfico, las comunas con una mayor frecuencia de publicaciones son Maipú, Santiago, Las Condes, Ñuñoa y La florida, lo que demuestra una fuerte tendencia hacia el sector oriente de la capital, sin embargo la mayoría de estas comunas no publican con un precio alto, como se vio anteriormente al analizar Maipú y Providencia. 
+
+A continuación, se muestra un análisis de las comunas antes mencionadas que poseen la mayor frecuencia:
+
+
+```{r}
+ggplot(df4,aes(x = comuna, fill = precio))+
+  scale_x_discrete(name = "Comunas")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Cantidad de Publicaciones por Comunas que mas Publican")+
+  geom_bar()
+```
+
+Además, con el objetivo de vincular estas comunas referente a las categorías que publican, es que se efectúa el siguiente gráfico:
+
+```{r}
+ggplot(df4,aes(x = comuna, fill = categoria))+
+  scale_x_discrete(name = "Comunas")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Cantidad de Publicaciones por Comunas que mas Publican por Precio")+
+  coord_flip()+
+  geom_bar()
+```
+
+Al igual que en los análisis anteriores no se puede verificar la existencia de alguna tendencia hacia algún tipo de producto o categoría especifico que explique esta alza en las publicaciones de las comunas mencionadas en el grafico precedente, sin embargo, se logra visualizar que junto con las más altas publicaciones la comuna de Maipú tiene también más variedad de categorías publicadas.
+
+Por último, se realiza el análisis de la variable precio relacionándolo con los años en que fueron registrados los usuarios de yapo:
+
+
+```{r}
+ggplot(fullDatos,aes(x = aniousuarioyapo , fill = precio))+
+  scale_x_discrete(name = "Año de Usuario de Yapo")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Cantidad de Publicaciones por Año de Registro de Usuario agrupados por Precio")+
+  geom_text(stat = "count" ,hjust=1, vjust = 0, position = position_dodge(1), aes(x = fullDatos$aniousuarioyapo, label = stat(count)))+
+  geom_bar()
+```
+
+En este grafico se puede visualizar una preponderancia por parte de los usuarios registrados en el año 2015 (29 publicaciones), seguido por el año 2014 (23 publicaciones), lo que demuestra el momento en que se registraron una mayor cantidad de usuarios, los cuales que mantienen su cuenta y sus publicaciones desde esa fecha, por otro lado es destacable ver lo que sucede con el año 2020, donde a pesar de no haber terminado el año y quedar un poco más de un tercio de este, se cuenta con un alto grado de publicaciones, las que alcanzan una frecuencia de 22, lo que si se proyecta hasta fin de año, podría sobrepasar fácilmente los mejores años de la página yapo, como fueron los antes mencionados (2014 y 2015), esto se explica por la crisis sanitaria en la que está inmerso el mundo y del cual nuestro país no es la excepción. Por lo tanto, se podría vislumbrar un fuerte aumento para este año con respecto al e-commerce, dado el análisis de esta página correspondiente al rubro y la percepción de lo que se ve hoy en día.
+
+Al igual que con los análisis anteriores se muestra un gráfico que muestra la influencia de las comunas dentro de las distintas publicaciones realizadas según el año de registro del usuario en yapo, donde como se mencionó anteriormente existe una fuerte preponderancia por las comunas del sector oriente con excepción de la comuna de Maipú.
+
+
+```{r}
+ggplot(fullDatos,aes(x = aniousuarioyapo , fill = comuna))+
+  scale_x_discrete(name = "Año de Usuario de Yapo")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Cantidad de Publicaciones por Año agrupados por Comunas")+
+  geom_bar()
+```
+
+También se muestra la relación existente por los años de registros de usuarios con los tipos de negocios, donde se sigue la tendencia a la venta como la mayor.
+
+```{r}
+ggplot(fullDatos,aes(x = aniousuarioyapo , fill = tiponegocio))+
+  scale_x_discrete(name = "Año de Usuario de Yapo")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Cantidad de Publicaciones por Año de Registro de Usuario por Tipo de Negocio")+
+  geom_bar()
+```
+
+Se finalizan los análisis con la preponderancia vista durante el transcurso del estudio por parte del tipo de negocio venta, sin embargo este grafico nos permite verificar además que durante el año 2015, el que figuro como uno con la mayor inscripción de usuarios registrados por año, existe una significativa cantidad del tipo de negocio transporte y mudanza, el cual claramente por las condiciones de pandemia y restricción de la movilidad que vive actualmente nuestro país, no figura en el año 2020, sin embargo se compensa con la preponderancia de la venta de productos ofertados por la página de e-commerce, sin que finalice todavía el presente año.
+
+Por último, a modo de resumen se muestran las principales conclusiones a las que se llegó gracias a este estudio:
+
+Con respecto al tipo de negocio la gran mayoría de las publicaciones corresponden a venta de productos y es en donde se publican los precios con menor costo, mientras los con mayor valor económico se sitúan en el tipo de negocio correspondiente a servicios domésticos y alimenticios seguido por construcción, reparación transporte y mudanza.
+
+Los precios más altos correspondientes a los tipos de negocios son: Servicios domésticos y alimenticios y Construcción, reparación transporte y mudanza contrastando con los más bajos relacionados al tipo de negocio venta.
+
+Al concentrar el análisis en la comuna de Maipú que es destacada como una con la mayor cantidad de publicaciones, se puede visualizar que posee un número importante de publicaciones relacionadas al área de Construcción, reparación transporte y mudanza.
+
+Existe una preponderancia de las categorías de accesorios y piezas para vehículos, seguido por consolas, videojuegos y accesorios y la categoría muebles, durante el transcurso de los años, lo que demostraría que no existe un factor tiempo en estos productos más comercializados.
+No existe alguna concentración de comunas que lidere dentro de las categorías, las distribuciones de las publicaciones de las categorías más publicadas se reparten de manera normal entre las comunas, sin que sea posible distinguir alguna tendencia.
+
+Existe una preponderancia por parte de los usuarios registrados en el año 2015 (29 publicaciones), seguido por el año 2014 (23 publicaciones), lo que demuestra el momento en que se registraron una mayor cantidad de usuarios, los cuales que mantienen su cuenta y sus publicaciones desde esa fecha. 
+
+El año 2020, donde a pesar de no haber terminado y quedar un poco más de un tercio de este, se cuenta con un alto grado de publicaciones, las que alcanzan una frecuencia de 22, lo que si se proyecta hasta fin de año, podría sobrepasar fácilmente los mejores años de la página yapo, como fueron los años 2014 y 2015, esto es explicado por la crisis sanitaria ya que se vislumbra un fuerte aumento para este año con respecto al e-commerce.
+
+Existe una fuerte preponderancia por las comunas del sector oriente con excepción de la comuna de Maipú.
+
+Durante el año 2015, se registró la mayor inscripción de usuarios registrados por año, y de esos usuarios existe una significativa cantidad del tipo de negocio transporte y mudanza, el cual por las condiciones de pandemia y restricción de la movilidad que vive actualmente nuestro país, se ha visto opacado en el año 2020, sin embargo, se compensa con la preponderancia de la venta de productos ofertados por la página de e-commerce, sin que finalice todavía el presente año.
+
+
+#Ejercicio 3 (10 puntos)
+#Dentro del data frame hay valores “NA”, para cada uno de estos casos describa por qué
+#sucede y grafíquelo.
+
+En el caso de los tipos de negocio con valores "NA", suceden por que la publicacion no tiene un tipo de negocio claro, dentro de las posibilidades que muestra la pagina, en efecto las categorias son las siguintes: Vendo Departamento, Casa o Terreno; Arriendo Departamento o Casa; Busco ofrezco Empleo y servicios, con el objetivo de demostrar esto, es que se muestra la siguiente tabla, acompañada de su grafico:
+
+```{r}
+natipodenegocio
+```
+
+
+```{r}
+ggplot(natipodenegocio,aes(x = tiponegocio , fill = categoria))+
+  scale_x_discrete(name = "Tipo de Negocio")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Valores NA de Tipos de Negocios por Categoria")+
+  geom_bar()
+```
+
+Con respecto al valor "NA" que aparece en los años de registro de usuario, se puede decir que se debe a lo mismo que en la explicacion anterior, ya que corresponden a Arriendo Casa o Departamento, Venda Casa y muebles, a continuacion se muestra una tabla y un posterior grafico que demuestra esto:
+
+```{r}
+naanousuario
+```
+
+
+```{r}
+ggplot(naanousuario,aes(x = naanousuario$aniousuarioyapo , fill = categoria))+
+  scale_x_discrete(name = "Tipo de Negocio")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Valores NA de Años de Registros de Usuarios por Categoria")+
+  geom_bar()
+```
+
+Por ultimo con respecto a las precios donde aparece el valor "NA", se debe a lo misso que se menciono anteriormente, sin embargo se agregan otras categorias que no tienen relacion con la venta o arriendo de propiedades, las que corresponden a ventas de productos variados, por lo tanto en este caso, se pude deber a algo intencional, con el objetivo de obtener preguntas por las personas interesadas en la publicacion y asi llamar la atencion o en sugundo lugar por un olvido por parte de la persona que publica su producto en la pagina web de yapo. Se muestra a continuacion una tabla y un grafico que demuestran esto:
+
+```{r}
+naprecio
+```
+
+
+```{r}
+ggplot(naprecio,aes(x = naprecio$categoria , fill = precio))+
+  scale_x_discrete(name = "Tipo de Negocio")+
+  scale_y_continuous(name = "Publicaciones")+
+  ggtitle(label = "Valores NA de Precios por Categoria")+
+  coord_flip()+
+  geom_bar()
+```
+
+
+#Ejercicio 4 (10 puntos)
+#Busque la forma de guardar y cargar los datos obtenidos en un CSV.
+
+```{r}
+write.csv(fullDatos, 'datos.csv')
+```
+
+#Ejercicio optativo (20 puntos)
+#Corra cada una de las líneas y explique qué realizan todas las funciones utilizadas en el
+#siguiente código. Puede apoyarse ingresando a la página y hacer click en “Inspeccionar elemento”.
+
+Importante: esta parte de la guía ya fue enviada el día lunes 10 de agosto antes de clases, según lo señalado con respecto a la fecha de entrega. Se adjunta de todos modos y en esta ocasión no se corren los códigos para que no modifiquen la información con la que fueron elaborados los gráficos.
+
+```{r}
+fullDatos <- data.frame()
+for(numeroPagina in 1:5){
+  readHtml <- read_html(paste("https://www.yapo.cl/region_metropolitana?ca=15_s&o=",numeroPagina,sep = ""))
+  print(paste("Descargando pagina nro:",numeroPagina))
+  nodeTabla <- html_nodes(readHtml, ".listing_thumbs")
+  nodeTabla <- html_nodes(nodeTabla, ".title")
+  linksProductos <- html_attr(nodeTabla,"href")
+  
+  for (urlYapo in linksProductos) {
+    htmlSeg <- read_html(urlYapo)
+    
+    print(paste("Descargando URL ==> ",urlYapo))
+    
+    textoTipoAviso <- obtenerCategoria(htmlSeg)
+    precio <- sacandoPrecio(htmlSeg)
+    fullDatos <- rbind(fullDatos,data.frame(categoria = textoTipoAviso, precio = precio))
+  }
+}
+
+View(fullDatos)
+```
+
+##Desarrollo
+
+#Se crea la variable "fullDatos" la que guarda un data frames vacio. El 
+#data frames es una estructura de datos similar a una hoja de datos tipo excel o csv.
+
+```{r}
+fullDatos <- data.frame()
+```
+
+#Se crea una funcion for, con la variable "numeroPagina" que recorre el 
+#sitio web de yapo filtrado por la region metropolitana desde la pagina 1 a la 5 
+
+```{r}
+for(numeroPagina in 1:5){}
+```
+
+#Se crea la variable "readHtml" que contiene la funcion read_html la que 
+#permite leer el código HTML de cualquier pagina web, donde el argumento es la dirección 
+#URL de la página yapo. El argumento de la funcion que este caso es el link de pagina
+#esta concatenado con una funcion paste, que junta el link de la pagina con la variable
+#numero de pagina creada en el for para recorrer, ademas de la funcion sep="" entendida
+#como un separador de campo que en este caso es un espacio, debido a que esta entre comillas
+
+```{r}
+readHtml <- read_html(paste("https://www.yapo.cl/region_metropolitana?ca=15_s&o=",numeroPagina,sep = ""))
+```
+
+#Se crea la funcion print que busca que se imprima en la consola los valores
+#concatenados por la funcion precedente paste, que junta el texto escrito con la variable  
+#numeroPagina que recorre el primer for creado en la funcion, por lo tanto lo que se imprime
+#en la consola es "Descargando pagina nro: y el numero de la pagina a medida que va 
+#recorriendo el for
+
+```{r}
+print(paste("Descargando pagina nro:",numeroPagina))
+```
+
+#Se crea la variable "nodetable" la que contiene a la funcion html_nodes 
+#que se encarga de la extracción de una parte específica del código HTML, que en este caso
+#son las tablas que contienen la descripcion de los productos que son comercializados, teniendo
+#como argumento el read html que lee el codigo y la clase ".listing_thumbs" correspondiente a la tabla
+#luego se pisa la variable creada con la misma funcion pero ahora extrae el titulo del
+#producto con la clase ".title"
+
+```{r}
+nodeTabla <- html_nodes(readHtml, ".listing_thumbs")
+nodeTabla <- html_nodes(nodeTabla, ".title")
+```
+
+#Se crea una nueva variable de nombre linksProductos, la cual mediante la funcion
+#html_attr permite extraer y acceder a los atributos del código, teniendo como argumentos la variable
+#creada en la linea precedente de nombre nodeTabla y "href" que en la pagina corresponde a los
+#links desde donde provienen las tablas dentro de la url
+
+```{r}
+linksProductos <- html_attr(nodeTabla,"href")
+```
+
+#Se crea una nueva funcion for, la que mediante "urlYapo" recorrera la variable
+#creada en la linea anterior llamada linksProductos
+
+```{r}
+for (urlYapo in linksProductos){}
+```
+
+#Se crea la variable htmlSeg la que mediante la funcion read_html, como se 
+#mencino anteriormente, permite leer el código HTML de la pagina web de yapo en este caso, 
+#ademas como argumento se utiliza la variable creada en la funcion anterior correspondiente
+#al for, llamada "urlYapo" que recorrio linksProductos
+
+```{r}
+htmlSeg <- read_html(urlYapo)
+```
+
+#Se utiliza la funcion print para imprimir en la consola un paste, que concatena
+#el texto "Descargando URL ==> "con urlYapo que es la variable que recorre el for
+
+```{r}
+print(paste("Descargando URL ==> ",urlYapo))
+```
+
+#Se crea la variable "textoTipoAviso" que mediante la funcion creada en el 
+#documento "libreriasYapo.R" llamada "obtenerCategoria" permite que al ingresar "htmlSeg" 
+#(variable creada posterior al segundo for que lee el codigo html de urlYapo), devuelve o retorna 
+#la variable nodoBraed dentro de una funcion html_text, la cual extrae atributos, texto y nombres 
+#de etiqueta de html. En este caso especifico extrae piezas de documentos html utilizando selectores 
+#xpath y css,asociados al diseño de la pagina y especificamente la clase breadcrumbs y el atributo
+#strong, que corresponde a texto en negrita
+
+```{r}
+textoTipoAviso <- obtenerCategoria(htmlSeg)
+
+obtenerCategoria <- function(htmlSeg){
+  nodoBread <- html_nodes(htmlSeg, ".breadcrumbs")
+  nodoBread <- html_nodes(nodoBread, "strong")
+  return(html_text(nodoBread))
+}
+```
+
+#Se crea la variable precio, donde se almacena la funcion sacandoPrecio, creada en
+#el documento "libreriasYapo.R" la cual permite que al ingresar la variable htmlSeg devuelva
+#el precio obtenido, referente a la funcion sacando precio se puede decir que contiene a la 
+#funcion html_nodes (que permite extracción de partes específicas del código HTML, utilizando
+#un selector llamado ".offer" que extrae el precio desde la tabla en la pagina de yapo, y que
+#lo guarda en una variable llamada nodoBread, posterior a esto utilizando la funcion condicional
+#if poniendo como condicional que si el largo de nodobread es mayor que 0 cree una funcion precio
+# con la variable nodobread y en caso contrario devuelva el valor NA. Con respecto a la variable
+#creada dentro del if de nombre precio se le aplica una funcion gsub que se usa para limpiar los 
+#datos poniendo como primer termino el valor a reemplazar por el valor definitivo y asi
+#se va pisando la variable eliminado los valores \\t, \\n, \\$, [.], y reemplazando por un 
+#espacio vacio representado por "" (nada),y como ultimo valor del argumneto donde lo va a hacer (precio)}
+#finalmente con la funcion as.numeric se asegura que el valor devuelto es un numero y por ultimo esta 
+#la funcion return la que devuelve o retorna el precio
+
+```{r}
+precio <- sacandoPrecio(htmlSeg)
+
+sacandoPrecio <- function(htmlSeg){
+  nodoBread <- html_nodes(htmlSeg, ".offer")
+  if(length(nodoBread)>0){
+    precio <- html_text(nodoBread)
+    precio <- gsub("\\t","",precio)
+    precio <- gsub("\\n","",precio)
+    precio <- gsub("\\$","",precio)
+    precio <- gsub("[.]","",precio)
+    precio <- as.numeric(precio)
+  }else{
+    precio = NA
+  }
+  return(precio)
+}
+
+```
+
+#Se le agrega la funcion rbind a la variable creada al comienzo de nombre 
+#fullDatos la que permite tomar una secuencia de dataframes y combinar por columnas o filas, 
+#mediante los argumentps, en el ejemplo la primera columna seria categoria correspondiente
+#al textoTipoAviso y la segunda el precio con el mismo nombre
+
+```{r}
+fullDatos <- rbind(fullDatos,data.frame(categoria = textoTipoAviso, precio = precio))
+```
+
+#Finalmente, se cierra con los corchetes de los 2 for creados anteriormente
+
+
+##Por ultimo a modo de resumen, se detallan las funciones utilizadas con su respectivo uso:
+
+#paste: concatena codigos por ejemplo en este caso un texto con una variable
+
+#print: imprime en la consola los valores a medida que va corriendo la funcion o al final de esta
+
+#if: funcion condicional que en caso de ser verdadera o falsa realiza la gestion requerida dependiendo
+#del valor logico
+
+#for: recorre el vectores, listas, secuencias, etc, en esta caso recorre el sitio web de yapo 
+#filtrado por la region metropolitana desde la pagina 1 a la 5 (primer for)
+
+#retrurn: devuelve en la consola el resultado de una funcion
+
+#sep="": es un separador de campo que en este caso es un espacio, debido a que esta entre comillas
+
+#as.numeric: hace que el valor ingresado en los argumnetos sea numerico
+
+#rbind: toma una secuencia de variables, vectores, listas, etc. en este caso dataframes y combina por 
+#columnas o filas
+
+#data.frame: El data frames es una estructura de datos similar a una hoja de datos tipo excel o 
+#csv que sirve para guardar datos en forma ordenada de tipo columnas y filas.
+
+#gsub: se usa para limpiar los datos extraidos de una pagina web, poniendo como primer termino el 
+#valor a reemplazar por el valor definitivo y al final el argumento desde donde lo va a hacer (reemplaza)
+
+#read_html: permite leer el código HTML de cualquier pagina web, donde el argumento es la 
+#dirección (lee como pagina web)
+
+#html_text: extrae atributos, texto y nombres de una pagina web utilizando por ejemplo css que 
+#corresponde al diseño de la pagina (guarda datos de la pagina)
+
+#html_nodes: extrae una parte específica del código HTML como por ejemplo tablas 
+
+#html_attr: permite extraer y acceder a los atributos del código
+
+#obtenerCategoria:funcion creada en libreriasYapo.R permite que al ingresar "htmlSeg" devuelva
+#la variable nodoBraed
+
+#sacandoPrecio: funcion creada en libreriasYapo.R la cual permite que al ingresar la variable htmlSeg 
+#devuelva el precio obtenido
+
+
+
+##Juan Acuña Vega, Big Data, Ici, Utem.
